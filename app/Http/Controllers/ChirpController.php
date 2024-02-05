@@ -32,7 +32,12 @@ class ChirpController extends Controller
      */
     public function store(Request $request)
     {
-        "Chirp done ;)";
+        $request->validate([
+            "message" => "required|max:255",
+        ]);
+        $request->user()->chirps()->create([
+            "message" => $request->input("message"),
+        ]);
     }
 
     /**
