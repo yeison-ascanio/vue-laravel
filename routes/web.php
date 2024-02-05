@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\ChirpController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
@@ -15,12 +16,7 @@ use Inertia\Inertia;
 | contains the "web" middleware group. Now create something great!
 |
 */
-Route::get("/chirps", function(){
-    return Inertia::render("Chirps/Index",[
-        "subtitle" => "From the laravel to front",
-        "title" => "Same, from the route"
-    ]);
-})->middleware("auth")->name("chirps.index");
+Route::resource("chirps", ChirpController::class)->middleware("auth");
 
 Route::get('/', function () {
     return Inertia::render('Welcome', [
