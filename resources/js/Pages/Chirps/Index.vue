@@ -5,16 +5,20 @@ import { Head, Link } from '@inertiajs/vue3';
 import { ref } from 'vue';
 import axios from 'axios';
 import InputError from '@/Components/InputError.vue';
+
 defineProps(["title", "subtitle"])
 
 const message = ref('')
 const errors = ref('')
+const processing = ref(false)
 
 function submit() {
+    processing.value = true
     axios.post(route('chirps.store'), { message: message.value })
         .then((res) => {
             console.log(res.data);
             message.value = ""
+            errors.value = {}
         })
         .catch((err) => {
             if (err.response.status === 422) {
@@ -22,7 +26,7 @@ function submit() {
                 return
             }
             console.log(err.response.data.message);
-        })
+        }).finally(() => (processing.value = false))
 } 
 </script>
 
@@ -32,7 +36,7 @@ function submit() {
     <AuthenticatedLayout>
         <template #header>
             <h2 class="font-semibold text-xl text-gray-800 dark:text-gray-200 leading-tight">Dashboard
-                {{ title }}
+                Chirps
             </h2>
 
         </template>
@@ -46,7 +50,9 @@ function submit() {
                                 class="bg-gray-800 text-white p-2 block w-full rounded-md border-gray-300 p-2 border-2 border-gray-500 focus:border-emerald-500 outline-color:emerald-500 placeholder-gray-500">
                             </textarea>
                             <InputError :message="errors.message && errors.message[0]" />
-                            <PrimaryButton>Chirp</PrimaryButton>
+                            <PrimaryButton :disable="processing" class="mt-2">
+                                {{ processing ? "Enviando..." : "Chirps" }}
+                            </PrimaryButton>
                         </form>
                     </div>
                 </div>
