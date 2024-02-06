@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Http\Resources\ChirpResource;
 use App\Models\Chirp;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
@@ -13,9 +14,10 @@ class ChirpController extends Controller
      */
     public function index()
     {
+        $chirp = Chirp::with('user')->latest()->get();
+
         return Inertia::render("Chirps/Index",[
-            "subtitle" => "From the laravel to front",
-            "title" => "Same, from the route"
+            'chirps' => ChirpResource::collection($chirp)
         ]);
     }
 
@@ -35,9 +37,12 @@ class ChirpController extends Controller
         $request->validate([
             "message" => "required|max:255",
         ]);
+
         $request->user()->chirps()->create([
             "message" => $request->input("message"),
         ]);
+
+        return back()->with("status", __("Chirp Created!"));
     }
 
     /**

@@ -2,19 +2,20 @@
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import PrimaryButton from '@/Components/PrimaryButton.vue';
 import { Head, Link, useForm } from '@inertiajs/vue3';
-import { ref } from 'vue';
-import axios from 'axios';
 import InputError from '@/Components/InputError.vue';
-
+import ChirpItem from '@/Components/ChirpItem.vue';
 const form = useForm({
     message: ''
 })
 
 function submit() {
     form.post(route('chirps.store'), {
-        onSuccess: (res) => form.reset()
+        onSuccess: (res) => form.reset(),
+        preserveState: false 
     })
 }
+
+defineProps(['chirps'])
 </script>
 
 <template>
@@ -42,6 +43,13 @@ function submit() {
                             </PrimaryButton>
                         </form>
                     </div>
+                </div>
+                <div class="mt-6 bg-white dark:bg-gray-800 shadow-md rounded-lg divide-y">
+                    <ChirpItem
+                        v-for="chirp in chirps"
+                        :key="`chirps-${chirp.id}`"
+                        :chirp="chirp"
+                    />
                 </div>
             </div>
         </div>
